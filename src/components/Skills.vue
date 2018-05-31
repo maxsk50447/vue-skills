@@ -1,6 +1,11 @@
 <template>
   <div class="hello">
     <div class="holder">
+      <form @submit.prevent="addSkill">
+        <input type="text" placeholder="Enter a skill you have..." v-model="skill" v-validate="'min:5'" name="skill">
+        <p class="alert" v-if="errors.has('skill')">{{ errors.first('skill') }}</p>
+      </form>
+      
       <ul>
         <li v-for="(data, index) in skills" :key='index'>{{ data.skill }}</li>
       </ul>
@@ -15,15 +20,23 @@ export default {
   name: 'Skills',
   data() {
     return {
-      name: 'Xevelize',
-      btnState: true,
+      skill: '',
       skills: [
         { "skill": "Vue.js"},
         { "skill": "Frontend Developer"}
-      ],
-      bgColor: 'yellow',
-      bgWidth: '100%',
-      bgHeight: '30px'
+      ]
+    }
+  },
+  methods: {
+    addSkill() {
+      this.$validator.validateAll().then((result) => {
+        if(result) {
+          this.skills.push({ skill: this.skill })
+          this.skill = '';
+        } else {
+          console.log('Not Valid')
+        }
+      })
     }
   }
 
@@ -62,4 +75,20 @@ export default {
     box-shadow: 0px 0px 40px lightgray;
   }
 
+  input {
+    width: calc(100% - 40px);
+    border: 0;
+    padding: 20px;
+    font-size: 1.3em;
+    background-color: #323333;
+    color: #687F7F;
+  }
+
+  .alert {
+    background: #fdf2ce;
+    font-weight: bold;
+    display: inline-block;
+    padding: 5px;
+    margin-top: -20px;
+  }
 </style>
